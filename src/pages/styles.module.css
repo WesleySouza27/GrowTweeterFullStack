@@ -1,0 +1,24 @@
+.not-found-page-container {
+    text-align: center;
+    padding: 20px;
+    font-family: Arial, sans-serif;
+}
+
+.not-found-page-container h1 {
+    font-size: 48px;
+    color: #333;
+}
+
+.not-found-page-container p {
+    font-size: 18px;
+    color: #666;
+}
+
+.not-found-page-container a {
+    color: #1da1f2;
+    text-decoration: none;
+}
+
+.not-found-page-container a:hover {
+    text-decoration: underline;
+}
