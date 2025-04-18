@@ -28,15 +28,18 @@ export const Header = styled.div`
 
 export const BackButton = styled.button`
   align-self: flex-start;
+  flex-direction: column;
   background: none;
   border: none;
-  font-size: 1.5rem;
-  color: #1da1f2;
+  font-size: 1.3rem;
+  color:rgb(18, 24, 27);
   cursor: pointer;
   margin-bottom: 10px;
+  margin-right: 15px;
 
   &:hover {
-    text-decoration: underline;
+    text-decoration: none;
+    color:#1da1f2;
   }
 `;
 
@@ -46,20 +49,22 @@ export const Avatar = styled.img`
   border-radius: 50%;
   border: 3px solid #1da1f2;
   object-fit: cover;
-  margin-bottom: 15px;
+  margin: 50px 0 0 0;
+  margin-right: auto;
   align-items: flex-start;
 `;
 
 export const ProfileInfo = styled.div`
-  text-align: center;
+  text-align: start;
+  margin-right: auto;
 
   h2 {
-    font-size: 1.5rem;
+    font-size: 1rem;
     margin: 0;
   }
 
   .username {
-    font-size: 1rem;
+    font-size: 1.2rem;
     color: #657786;
   }
 `;
@@ -135,3 +140,25 @@ export const UserInfo = styled.div`
     }
   }
 `;
+
+export const TitlePerfil = styled.div`
+  text-align: start;
+  margin-bottom: 20px;
+
+  .titulo-um {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #14171a;
+  }
+
+  .titulo-dois {
+    font-size: 0.8rem;
+    color: #657786;
+  }
+`;
+
+export const SecaoPerfilEmCima = styled.div`
+  display: flex;
+  margin-right: auto;
+  flex-direction: row;
+`

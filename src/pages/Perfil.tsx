@@ -10,6 +10,7 @@ import {
   BackButton,
   ProfileInfo,
   Avatar,
+  SecaoPerfilEmCima,
   // TweetInput,
   // TweetButton,
 } from './Perfil.styles';
@@ -17,6 +18,7 @@ import { criarTweetApi } from '../services/growTweeter-api/tweets/criar';
 import { listarTweets } from '../services/growTweeter-api/tweets/listar';
 import avatarLogo from '../assets/default_profile-6e21ba0e.png'
 import { TweetModal } from '../components/TweetModal/TweetModal';
+import { TitlePerfil } from './Perfil.styles';
 
 export function Perfil() {
   const [userTweets, setUserTweets] = useState<TweetInterface[]>([]);
@@ -62,7 +64,15 @@ export function Perfil() {
       {/* Feed principal */}
       <Content>
         <Header>
-          <BackButton>&larr; Voltar</BackButton>
+          <SecaoPerfilEmCima>
+            <BackButton>&larr;</BackButton>
+            <TitlePerfil>
+              <div className="titulo-um">
+                Perfil de @{user?.email.split('@')[0] || 'username'}
+              </div>
+              <div className="titulo-dois">X-tweets</div>
+            </TitlePerfil>
+          </SecaoPerfilEmCima>
           <Avatar src={userAvatar} alt="foto usuário" />
           <ProfileInfo>
             <h2>{user?.nome || 'Usuário'}</h2>
