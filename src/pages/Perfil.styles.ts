@@ -146,13 +146,14 @@ export const TitlePerfil = styled.div`
   margin-bottom: 20px;
 
   .titulo-um {
-    font-size: 1rem;
+    font-size: 0.8rem;
     font-weight: 600;
     color: #14171a;
+    margin-bottom: 5px;
   }
 
   .titulo-dois {
-    font-size: 0.8rem;
+    font-size: 0.7rem;
     color: #657786;
   }
 `;

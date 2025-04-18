@@ -21,10 +21,11 @@ export const FeedContainer = styled.div`
 export const FeedTitle = styled.h1`
   font-size: 1rem;
   font-weight: bold;
-  margin-bottom: 20px;
+  margin: 20px 0 20px 10px;
   font-family: karla, roboto, sans-serif;
   border-bottom: 1px solid #e1e8ed;
   padding-bottom: 15px;
+  margin-top: 10px;
 `;
 
 export const Sidebar = styled.div`

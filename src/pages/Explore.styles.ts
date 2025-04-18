@@ -20,20 +20,15 @@ export const ExploreContent = styled.div`
 `;
 
 export const ExploreTitle = styled.h1`
-  font-size: 1.5rem;
+  font-size: 1rem;
   font-weight: bold;
   margin-bottom: 20px;
   color: #14171a;
+  border-bottom: 1px solid #e1e8ed;
+  padding-bottom: 15px;
 `;
 
 export const TrendingTopicsList = styled.div`
-  h2 {
-    font-size: 1.2rem;
-    font-weight: bold;
-    margin-bottom: 10px;
-    color: #14171a;
-  }
-
   ul {
     list-style: none;
     padding: 0;
@@ -54,12 +49,12 @@ export const TrendingTopicsList = styled.div`
     }
 
     .wh-label {
-      font-size: 0.8rem;
+      font-size: 0.6rem;
       color: #657786;
     }
 
     .wh-title {
-      font-size: 0.9rem;
+      font-size: 0.8rem;
       font-weight: bold;
       color: #14171a;
     }

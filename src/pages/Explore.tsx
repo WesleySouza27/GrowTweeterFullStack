@@ -20,7 +20,6 @@ export function Explore() {
       <ExploreContent>
         <ExploreTitle>Explorar</ExploreTitle>
         <TrendingTopicsList>
-          <h2>Assuntos do Momento</h2>
           <ul>
             {trendingTopics.map((topic, idx) => (
               <li key={idx}>
