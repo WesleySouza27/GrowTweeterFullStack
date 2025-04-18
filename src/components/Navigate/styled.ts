@@ -11,7 +11,7 @@ background-color: #ffffff;
 
 export const Logo=styled.div` font-size: 1rem;
 font-weight: bold;
-margin: -10px 0px 0px 42px;
+margin: -5px 0px 0px 42px;
 color: #1da1f2;
 
   img {
@@ -60,7 +60,7 @@ border-radius: 25px;
 cursor: pointer;
 font-weight: bold;
 margin-bottom: 20px;
-width: 180px;
+width: 150px;
 margin-left: 40px;
 
 &:hover {
@@ -117,7 +117,7 @@ export const UserCard = styled.div`
   background-color: transparent; /* Sem borda destacada */
   position: fixed;
   bottom: 20px;
-  left: 20vw;
+  left: 21vw;
   width: 250px;
 
 `;
@@ -134,19 +134,19 @@ export const UserInfo = styled.div`
   flex-direction: column;
 
   .name {
-    font-size: 1rem;
-    font-weight: bold;
+    font-size: 0.9rem;
+    font-weight: 600;
     margin: 0;
   }
 
   .username {
-    font-size: 0.9rem;
+    font-size: 0.8rem;
     color: #657786;
     margin: 0;
   }
 
   .logout {
-    font-size: 0.9rem;
+    font-size: 0.8rem;
     color: #1da1f2;
     cursor: pointer;
     text-decoration: none;

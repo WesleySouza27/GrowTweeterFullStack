@@ -10,7 +10,7 @@ export function ListarTweets({ tweet }: ListaTweetsProps) {
   console.log('Tweets recebidos pelo ListarTweets:', tweet);
 
   if (!Array.isArray(tweet) || tweet.length === 0) {
-    return <p>Nenhum tweet encontrado.</p>;
+    return <p>Carregando tweets...</p>;
   }
 
   return (

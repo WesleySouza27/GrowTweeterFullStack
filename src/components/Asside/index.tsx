@@ -7,7 +7,7 @@ export function Asside() {
       <TrendingTopics>
         <h2>O que está acontecendo?</h2>
         <ul>
-          {trendingTopics.map((topic, idx) => (
+          {trendingTopics.slice(0, 4).map((topic, idx) => (
             <li key={idx}>
               <p className="wh-label">{topic.label}</p>
               <p className="wh-title">{topic.title}</p>

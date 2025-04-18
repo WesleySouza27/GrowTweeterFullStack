@@ -1,22 +1,37 @@
-import { Navigate } from '../components/Navigate';
 import { Asside } from '../components/Asside';
+import {
+  ExplorePageContainer,
+  ExploreContent,
+  ExploreTitle,
+  TrendingTopicsList,
+} from './Explore.styles';
 import { trendingTopics } from '../constants/trendingTopics';
-import { PageContainer } from '../configs/global/globalStyles';
+import { Navigate } from '../components/Navigate';
 
 export function Explore() {
+
+  const handleTweetClick = () => {
+    console.log('Botão Tweetar clicado!');
+    // Adicione aqui a lógica para abrir o modal de tweet, se necessário
+  };
   return (
-    <PageContainer className="explore-page-container">
-      <Navigate onTweetClick={() => {}}/>
-      <main className="explore-content">
-        <h1>Explorar</h1>
-        <div className="trending-topics-list">
-          <h2>Assuntos do momento</h2>
+    <ExplorePageContainer>
+      <Navigate onTweetClick={handleTweetClick} />
+      <ExploreContent>
+        <ExploreTitle>Explorar</ExploreTitle>
+        <TrendingTopicsList>
+          <h2>Assuntos do Momento</h2>
           <ul>
-            {trendingTopics.map((topic, idx) => <li key={idx}>{topic.label}{topic.title}</li>)}
+            {trendingTopics.map((topic, idx) => (
+              <li key={idx}>
+                <p className="wh-label">{topic.label}</p>
+                <p className="wh-title">{topic.title}</p>
+              </li>
+            ))}
           </ul>
-        </div>
-      </main>
+        </TrendingTopicsList>
+      </ExploreContent>
       <Asside />
-    </PageContainer>
+    </ExplorePageContainer>
   );
 }

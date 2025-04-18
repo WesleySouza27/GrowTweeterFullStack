@@ -14,6 +14,7 @@ import {
   // TweetButton,
 } from './Perfil.styles';
 import { criarTweetApi } from '../services/growTweeter-api/tweets/criar';
+import { listarTweets } from '../services/growTweeter-api/tweets/listar';
 import avatarLogo from '../assets/default_profile-6e21ba0e.png'
 import { TweetModal } from '../components/TweetModal/TweetModal';
 
@@ -27,7 +28,16 @@ export function Perfil() {
     // Recupera os dados do usuário logado do localStorage
     const storedUser = localStorage.getItem('user');
     if (storedUser) {
-      setUser(JSON.parse(storedUser));
+      const parsedUser = JSON.parse(storedUser);
+      setUser(parsedUser);
+
+      // Lista os tweets e filtra apenas os do usuário logado
+      listarTweets().then((tweets) => {
+        const userTweets = tweets.filter(
+          (tweet) => tweet.usuarioId === parsedUser.id
+        );
+        setUserTweets(userTweets);
+      });
     }
   }, []);
 
@@ -41,9 +51,6 @@ export function Perfil() {
       console.error('Erro ao criar tweet:', error);
     }
   };
-
-
-  // precisa importar/capturar a foto do usuario logado para usar no perfil e nos tweets
 
   const userAvatar = user?.avatar || avatarLogo;
 

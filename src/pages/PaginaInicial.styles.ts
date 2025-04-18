@@ -2,17 +2,17 @@ import styled from 'styled-components';
 
 export const Container = styled.div`
   display: grid;
-  grid-template-columns: 250px auto 300px; /* Menu lateral, feed principal, barra lateral */
+  grid-template-columns: 230px auto 480px; /* Menu lateral, feed principal, barra lateral */
   min-height: 100vh;
   background-color: #f5f8fa;
+  padding-left: 50px;
 `;
 
 export const FeedContainer = styled.div`
-  padding-left: 10px;
   background-color: #ffffff;
   border-left: 1px solid #e1e8ed;
   border-right: 1px solid #e1e8ed;
-  width: 547px;
+  width: 600px;
   height: 100vh;
   overflow-y: auto; /* Permite scroll apenas no feed */
   font-family: karla, roboto, sans-serif;

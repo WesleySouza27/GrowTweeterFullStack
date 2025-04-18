@@ -2,11 +2,11 @@ import styled from 'styled-components';
 
 export const ProfileContainer = styled.div`
   display: grid;
-  grid-template-columns: 250px auto 300px; /* Menu lateral, feed principal, barra lateral */
+  grid-template-columns: 230px auto 480px; /* Menu lateral, feed principal, barra lateral */
   max-width: 1200px; /* Define a largura máxima */
   margin: 0 auto; /* Centraliza a página */
   min-height: 100vh;
-  background-color: #f5f8fa;
+  background-color: #ffffff;
 `;
 
 export const Content = styled.div`
@@ -16,6 +16,7 @@ export const Content = styled.div`
   border-right: 1px solid #e1e8ed;
   height: 100vh;
   overflow-y: auto; /* Permite scroll apenas no feed */
+  width: 600px;
 `;
 
 export const Header = styled.div`
@@ -46,6 +47,7 @@ export const Avatar = styled.img`
   border: 3px solid #1da1f2;
   object-fit: cover;
   margin-bottom: 15px;
+  align-items: flex-start;
 `;
 
 export const ProfileInfo = styled.div`

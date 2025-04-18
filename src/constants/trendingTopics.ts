@@ -15,4 +15,16 @@ export const trendingTopics = [
     label: 'Cinema - Assunto do Momento',
     title: 'Assunto sobre Filmes e Cinema',
   },
+  {
+    label: 'Entretenimento - Assunto do Momento',
+    title: 'Assunto sobre Entretenimento',
+  },
+  {
+    label: 'Assunto do Momento em Porto Alegre',
+    title: 'Assunto do Momento em Porto Alegre',
+  },
+  {
+    label: 'Daphne - Principal Assunto do Momento',
+    title: 'Assunto sobre a Daphne',
+  },
 ];
