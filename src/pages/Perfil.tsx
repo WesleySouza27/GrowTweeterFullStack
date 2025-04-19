@@ -22,7 +22,7 @@ import { TitlePerfil } from './Perfil.styles';
 
 export function Perfil() {
   const [userTweets, setUserTweets] = useState<TweetInterface[]>([]);
-  const [newTweet, setNewTweet] = useState('');
+  const [newTweet, setNewTweet] = useState(''); // Estado para o conteúdo do novo tweet
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [user, setUser] = useState<UsuarioInterface | null>(null);
 
@@ -47,15 +47,14 @@ export function Perfil() {
     try {
       const createdTweet = await criarTweetApi({ descricao: newTweet });
       setUserTweets((prevTweets) => [createdTweet, ...prevTweets]);
-      setNewTweet('');
-      setIsModalOpen(false);
+      setNewTweet(''); // Limpa o campo de texto após criar o tweet
+      setIsModalOpen(false); // Fecha o modal
     } catch (error) {
       console.error('Erro ao criar tweet:', error);
     }
   };
 
   const userAvatar = user?.avatar || avatarLogo;
-
 
   return (
     <ProfileContainer>
@@ -70,7 +69,7 @@ export function Perfil() {
               <div className="titulo-um">
                 Perfil de @{user?.email.split('@')[0] || 'username'}
               </div>
-              <div className="titulo-dois">X-tweets</div>
+              <div className="titulo-dois">{userTweets.length} tweets</div>
             </TitlePerfil>
           </SecaoPerfilEmCima>
           <Avatar src={userAvatar} alt="foto usuário" />
@@ -90,6 +89,8 @@ export function Perfil() {
         <TweetModal
           onClose={() => setIsModalOpen(false)}
           onSubmit={handleCreateTweet}
+          value={newTweet} // Passa o valor do tweet
+          onChange={(e) => setNewTweet(e.target.value)} // Atualiza o estado do tweet
         />
       )}
     </ProfileContainer>

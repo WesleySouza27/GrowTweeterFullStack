@@ -6,6 +6,11 @@ interface CreateTweetPayload {
   // Adicione outros campos conforme necessário (ex: tipo, parentId)
 }
 
+interface ReplyPayload {
+  descricao: string;
+  tweetId: string;
+}
+
 export async function criarTweetApi(data: CreateTweetPayload): Promise<TweetInterface> {
   try {
     const response = await api.post('/tweets', data);
@@ -19,3 +24,15 @@ export async function criarTweetApi(data: CreateTweetPayload): Promise<TweetInte
     throw error;
   }
 }
+
+export const criarReply = async (payload: ReplyPayload) => {
+  try {
+    const response = await api.post(`/tweets/${payload.tweetId}/reply`, {
+      descricao: payload.descricao,
+    });
+    return response.data.dados; // Retorna os dados da reply criada
+  } catch (error) {
+    console.error('Erro ao criar reply:', error);
+    throw error;
+  }
+};

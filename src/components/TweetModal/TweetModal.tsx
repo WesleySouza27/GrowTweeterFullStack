@@ -11,12 +11,14 @@ import avatarLogo from '../../assets/default_profile-6e21ba0e.png';
 import { UserAvatar } from '../Navigate/styled';
 
 interface TweetModalProps {
-  onClose: () => void; // Fecha o modal
-  onSubmit: (descricao: string) => void; // Envia o tweet
+  onClose: () => void;
+  onSubmit: () => void;
+  value: string;
+  onChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
+  placeholder?: string;
 }
 
-export function TweetModal({ onClose, onSubmit }: TweetModalProps) {
-  const [tweetText, setTweetText] = useState('');
+export function TweetModal({ onClose, onSubmit, value, onChange, placeholder }: TweetModalProps) {
   const [userAvatar, setUserAvatar] = useState<string>(avatarLogo);
 
 
@@ -29,31 +31,32 @@ export function TweetModal({ onClose, onSubmit }: TweetModalProps) {
     }
   }, []);
 
-  const handleSubmit = (event: React.FormEvent) => {
-    event.preventDefault();
-    if (tweetText.trim()) {
-      onSubmit(tweetText);
-      setTweetText('');
-    }
-  };
 
   return (
     <ModalOverlay>
       <ModalContent>
         <CloseButton onClick={onClose}>&times;</CloseButton>
-        <h2>O que está acontecendo?</h2>
-        <TweetForm onSubmit={handleSubmit}>
+        <h2>{placeholder || 'O que está acontecendo?'}</h2>
+        <TweetForm onSubmit={(e) => {
+          e.preventDefault();
+          onSubmit();
+        }}>
           <div style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
             <UserAvatar src={userAvatar} alt="Avatar do usuário" />
             <TweetInput
-              value={tweetText}
-              onChange={(e) => setTweetText(e.target.value)}
-              placeholder="Digite seu tweet aqui..."
+              value={value}
+              onChange={onChange}
+              placeholder={'Digite sua resposta...'}
               maxLength={280}
               required
             />
           </div>
-          <TweetButton type="submit">Tweetar</TweetButton>
+          <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '10px' }}>
+            <TweetButton type="submit">Enviar</TweetButton>
+            <TweetButton type="button" onClick={onClose} style={{ backgroundColor: '#e1e8ed', color: '#14171a' }}>
+              Cancelar
+            </TweetButton>
+          </div>
         </TweetForm>
       </ModalContent>
     </ModalOverlay>

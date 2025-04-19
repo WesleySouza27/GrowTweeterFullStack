@@ -2,7 +2,7 @@ import styled from 'styled-components';
 
 export const PageContainer = styled.div`
   display: grid;
-  grid-template-columns: 230px auto 480px; /* Menu lateral, feed principal, barra lateral */
+  grid-template-columns: 230px auto 470px; /* Menu lateral, feed principal, barra lateral */
   max-width: 1200px; /* Define a largura máxima */
   margin: 0 auto; /* Centraliza a página */
   height: 100vh;
@@ -10,6 +10,7 @@ export const PageContainer = styled.div`
   font-family: Karla, Roboto, sans-serif;
   overflow: hidden; /* Remove o scroll geral da página */
   background-color: #ffffff;
+  padding: 0;
 `;
 
 import { createGlobalStyle } from 'styled-components';

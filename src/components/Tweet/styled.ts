@@ -4,6 +4,7 @@ export const TweetContainer=styled.div` display: flex;
 padding: 5px;
 border-bottom: 1px solid #e1e8ed;
 background-color: #ffffff;
+margin-left: 10px;
 `;
 
 export const Avatar=styled.div` margin-right: 10px;
@@ -58,4 +59,19 @@ font-size: 0.9rem;
     }
 }
 
+`;
+
+export const FollowButton = styled.button<{ isFollowing: boolean }>`
+  background-color: ${(props) => (props.isFollowing ? '#e1e8ed' : '#1da1f2')};
+  color: ${(props) => (props.isFollowing ? '#14171a' : '#ffffff')};
+  border: none;
+  padding: 5px 10px;
+  border-radius: 30px;
+  cursor: pointer;
+  font-size: 0.7rem;
+  margin-left: 20px;
+
+  &:hover {
+    background-color: ${(props) => (props.isFollowing ? '#d6d6d6' : '#0c85d0')};
+  }
 `;

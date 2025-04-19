@@ -18,6 +18,7 @@ export function PaginaInicial() {
   const [loading, setLoading] = useState(true);
   const [listaTweets, setListaTweets] = useState<TweetInterface[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [newTweetContent, setNewTweetContent] = useState(''); // Estado para o conteúdo do novo tweet
 
   useEffect(() => {
     setLoading(true);
@@ -27,12 +28,13 @@ export function PaginaInicial() {
     });
   }, []);
 
-  const handleCreateTweet = async (descricao: string) => {
+  const handleCreateTweet = async () => {
     try {
-      const newTweet = await criarTweetApi({ descricao });
+      const newTweet = await criarTweetApi({ descricao: newTweetContent });
       if (newTweet) {
         setListaTweets([newTweet, ...listaTweets]);
-        setIsModalOpen(false);
+        setNewTweetContent(''); // Limpa o campo de texto após criar o tweet
+        setIsModalOpen(false); // Fecha o modal
       } else {
         console.error('Erro: o tweet criado é indefinido.');
       }
@@ -54,7 +56,9 @@ export function PaginaInicial() {
       {isModalOpen && (
         <TweetModal
           onClose={() => setIsModalOpen(false)}
-          onSubmit={handleCreateTweet}
+          onSubmit={handleCreateTweet} // Chama a função sem argumentos
+          value={newTweetContent} // Passa o valor do novo tweet
+          onChange={(e) => setNewTweetContent(e.target.value)} // Atualiza o estado do novo tweet
         />
       )}
     </PageContainer>
