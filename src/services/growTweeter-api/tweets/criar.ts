@@ -1,29 +1,26 @@
 import { api } from "../api";
-import { TweetInterface } from "../../../interfaces/Interface";
+import { TweetInterface } from "../../../interfaces/Interface"; // TweetInterface
 
-interface CreateTweetPayload {
-  descricao: string;
-  // Adicione outros campos conforme necessário (ex: tipo, parentId)
-}
+// interface CreateTweetPayload {
+//   descricao: string;
+//   // Adicione outros campos conforme necessário (ex: tipo, parentId)
+// }
 
 interface ReplyPayload {
   descricao: string;
   tweetId: string;
 }
 
-export async function criarTweetApi(data: CreateTweetPayload): Promise<TweetInterface> {
+export const criarTweetApi = async (payload: { descricao: string }): Promise<TweetInterface> => {
   try {
-    const response = await api.post('/tweets', data);
-    console.log('Tweet criado:', response.data);
-    return {
-      ...response.data,
-      usuario: response.data.usuario || { id: '', nome: 'Usuário Desconhecido', email: '', avatar: '', criadoEm: '', atualizadoEm: '' },
-    };
+    const response = await api.post('/tweets', payload);
+    console.log('Resposta do backend (criarTweetApi):', response.data); // Log para depuração
+    return response.data; // Certifique-se de que o backend retorna { sucesso, mensagem, dados }
   } catch (error) {
-    console.error("Erro ao criar tweet:", error);
-    throw error;
+    console.error('Erro ao criar tweet na API:', error);
+    throw error; // Lança o erro para ser tratado no componente
   }
-}
+};
 
 export const criarReply = async (payload: ReplyPayload) => {
   try {

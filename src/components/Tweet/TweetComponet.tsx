@@ -19,34 +19,63 @@ import iconeLike from '../../assets/icone_curtir-407e1295.svg';
 import iconeLikeSelecionado from '../../assets/icone_curtir_selecionado-c222b3b4.svg';
 import { criarReply } from '../../services/growTweeter-api/tweets/criar';
 import { seguirUsuario, deixarDeSeguirUsuario, verificarSeSegue } from '../../services/growTweeter-api/tweets/follow';
+import { deletarTweet } from '../../services/growTweeter-api/tweets/deletar';
 
 interface TweetProps {
   tweet: TweetInterface;
 }
 
 export function Tweet({ tweet }: TweetProps) {
+  
+
   const user = JSON.parse(localStorage.getItem('user') || '{}');
-  const [likes, setLikes] = useState(tweet.likes.length);
+  const [likes, setLikes] = useState(tweet.likes ? tweet.likes.length: 0);
   const [liked, setLiked] = useState(
-    tweet.likes.some((like) => like.usuarioId === user.id)
-  );
+  tweet.likes ? tweet.likes.some((like) => like.usuarioId === user.id) : false
+);
   const [isReplyModalOpen, setIsReplyModalOpen] = useState(false);
   const [replyContent, setReplyContent] = useState('');
   const [replies, setReplies] = useState(tweet.replies || []);
   const [isFollowing, setIsFollowing] = useState(false);
   const [followId, setFollowId] = useState<string | null>(null);
   const [likeId, setLikeId] = useState<string | null>(null); 
+  
 
   useEffect(() => {
-    verificarSeSegue(user.id, tweet.usuario.id)
-      .then((follow) => {
-        if (follow) {
-          setIsFollowing(true);
-          setFollowId(follow.id);
-        }
-      })
-      .catch((error) => console.error('Erro ao verificar se segue:', error));
+    if (tweet && tweet.likes && tweet.replies) {
+      setLikes(tweet.likes.length);
+      setLiked(tweet.likes.some((like) => like.usuarioId === user.id));
+      setReplies(tweet.replies);
+    }
+  }, [tweet, user.id]);
+
+  useEffect(() => {
+    if (user.id && tweet.usuario.id) {
+      verificarSeSegue(user.id, tweet.usuario.id)
+        .then((follow) => {
+          if (follow) {
+            setIsFollowing(true);
+            setFollowId(follow.id);
+          }
+        })
+        .catch((error) => console.error('Erro ao verificar se segue:', error));
+    }
   }, [user.id, tweet.usuario.id]);
+
+  const handleDelete = async () => {
+    const confirmDelete = window.confirm('Tem certeza que deseja deletar este tweet?');
+    if (!confirmDelete) return;
+
+    try {
+      await deletarTweet(tweet.id); // Chama o serviço para deletar o tweet
+      alert('Tweet deletado com sucesso!');
+      // Aqui você pode implementar uma lógica para remover o tweet da lista de tweets no frontend
+    } catch (error) {
+      console.error('Erro ao deletar tweet:', error);
+      alert('Ocorreu um erro ao deletar o tweet. Tente novamente mais tarde.');
+    }
+  };
+
 
   const handleReply = async () => {
     try {
@@ -55,11 +84,14 @@ export function Tweet({ tweet }: TweetProps) {
         descricao: replyContent,
       };
       const createdReply = await criarReply(payload);
+      console.log('Resposta criada:', createdReply);
       setReplies([...replies, createdReply]);
       setReplyContent('');
       setIsReplyModalOpen(false);
+      console.log('Modal fechado e campo de input limpo.');
     } catch (error) {
       console.error('Erro ao enviar reply:', error);
+      alert('Ocorreu um erro ao enviar sua resposta. Tente novamente.');
     }
   };
 
@@ -107,9 +139,11 @@ export function Tweet({ tweet }: TweetProps) {
     }
   };
 
-  if (!tweet.usuario) {
-    return <p>Erro: Usuário não definido.</p>;
+  if (!tweet || !tweet.usuario || !Array.isArray(tweet.likes) || !Array.isArray(tweet.replies)) {
+    return <p>Erro: Dados do tweet estão incompletos ou inválidos.</p>;
   }
+
+  
 
   return (
     <>
@@ -153,6 +187,14 @@ export function Tweet({ tweet }: TweetProps) {
               </span>
               <span>{likes}</span>
             </div>
+            {tweet.usuario.id === user.id && ( // Exibe o botão apenas para o autor do tweet
+              <div className="action-item" onClick={handleDelete}>
+                <span role="img" aria-label="Deletar">
+                  🗑️
+                </span>
+                <span>Deletar</span>
+              </div>
+            )}
           </Actions>
         </Content>
       </TweetContainer>

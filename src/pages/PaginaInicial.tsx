@@ -29,19 +29,21 @@ export function PaginaInicial() {
   }, []);
 
   const handleCreateTweet = async () => {
-    try {
-      const newTweet = await criarTweetApi({ descricao: newTweetContent });
-      if (newTweet) {
-        setListaTweets([newTweet, ...listaTweets]);
-        setNewTweetContent(''); // Limpa o campo de texto após criar o tweet
-        setIsModalOpen(false); // Fecha o modal
-      } else {
-        console.error('Erro: o tweet criado é indefinido.');
-      }
-    } catch (error) {
-      console.error('Erro ao criar tweet:', error);
-    }
-  };
+  try {
+    const createdTweet = await criarTweetApi({ descricao: newTweetContent });
+    console.log('Tweet criado:', createdTweet); // Log para depuração
+
+    // Adiciona o novo tweet à lista de tweets
+    setListaTweets((prevTweets) => [createdTweet, ...prevTweets]);
+
+    // Limpa o campo de texto e fecha o modal
+    setNewTweetContent('');
+    setIsModalOpen(false);
+  } catch (error) {
+    console.error('Erro ao criar tweet:', error);
+    alert('Ocorreu um erro ao criar o tweet. Tente novamente.');
+  }
+};
 
   return (
     <PageContainer>

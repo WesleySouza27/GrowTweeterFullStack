@@ -58,6 +58,12 @@ export interface Likes {
   tweetId: string;
 }
 
+export interface ApiResponse {
+  sucesso: boolean;
+  mensagem: string;
+  dados: TweetInterface;
+}
+
 
 
 // export interface TweetInterface {

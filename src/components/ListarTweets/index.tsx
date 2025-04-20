@@ -1,6 +1,7 @@
 import { TweetInterface } from "../../interfaces/Interface";
 import { Tweet } from "../Tweet/TweetComponet";
-import { TweetListContainer, TweetListItem } from './styles.'
+import { TweetListContainer,} from './styles.' //  TweetListItem 
+import { ErrorBoundary } from "../ErrorBoundary"; 
 
 interface ListaTweetsProps {
   tweet: TweetInterface[];
@@ -15,11 +16,13 @@ export function ListarTweets({ tweet }: ListaTweetsProps) {
 
   return (
     <TweetListContainer>
-      {tweet.map((tweet) => (
-        <TweetListItem key={tweet.id}>
-          <Tweet tweet={tweet} />
-        </TweetListItem>
-      ))}
+      {tweet
+        .filter((t) => t && t.usuario && t.usuario.id) // Filtra tweets inválidos
+        .map((tweet) => (
+          <ErrorBoundary key={tweet.id}>
+            <Tweet tweet={tweet} />
+          </ErrorBoundary>
+        ))}
     </TweetListContainer>
   );
 }

@@ -112,13 +112,13 @@ export const MenuItem = styled.a`
 
 export const UserCard = styled.div`
   display: flex;
-  align-items: center;
+  align-items: flex-end;
   padding: 10px 15px;
   background-color: transparent; /* Sem borda destacada */
   position: fixed;
   bottom: 20px;
-  left: 21vw;
-  width: 250px;
+  /* left: 21vw; */
+  width: 200px;
 
 `;
 

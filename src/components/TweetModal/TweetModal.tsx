@@ -21,26 +21,35 @@ interface TweetModalProps {
 export function TweetModal({ onClose, onSubmit, value, onChange, placeholder }: TweetModalProps) {
   const [userAvatar, setUserAvatar] = useState<string>(avatarLogo);
 
-
   useEffect(() => {
-    // Recupera o avatar do usuário logado do localStorage
-    const storedUser = localStorage.getItem('user');
-    if (storedUser) {
-      const user = JSON.parse(storedUser);
-      setUserAvatar(user.avatar || avatarLogo); // Usa o avatar do usuário ou a imagem padrão
+    try {
+      const storedUser = localStorage.getItem('user');
+      if (storedUser) {
+        const user = JSON.parse(storedUser);
+        setUserAvatar(user.avatar || avatarLogo); // Usa o avatar do usuário ou a imagem padrão
+      }
+    } catch (error) {
+      console.error('Erro ao carregar avatar do usuário:', error);
+      setUserAvatar(avatarLogo); // Usa o avatar padrão em caso de erro
     }
   }, []);
-
 
   return (
     <ModalOverlay>
       <ModalContent>
         <CloseButton onClick={onClose}>&times;</CloseButton>
         <h2>{placeholder || 'O que está acontecendo?'}</h2>
-        <TweetForm onSubmit={(e) => {
-          e.preventDefault();
-          onSubmit();
-        }}>
+        <TweetForm
+          onSubmit={(e) => {
+            e.preventDefault();
+            try {
+              onSubmit();
+            } catch (error) {
+              console.error('Erro ao enviar o tweet:', error);
+              alert('Ocorreu um erro ao enviar o tweet. Tente novamente.');
+            }
+          }}
+        >
           <div style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
             <UserAvatar src={userAvatar} alt="Avatar do usuário" />
             <TweetInput
@@ -53,7 +62,11 @@ export function TweetModal({ onClose, onSubmit, value, onChange, placeholder }: 
           </div>
           <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '10px' }}>
             <TweetButton type="submit">Enviar</TweetButton>
-            <TweetButton type="button" onClick={onClose} style={{ backgroundColor: '#e1e8ed', color: '#14171a' }}>
+            <TweetButton
+              type="button"
+              onClick={onClose}
+              style={{ backgroundColor: '#e1e8ed', color: '#14171a' }}
+            >
               Cancelar
             </TweetButton>
           </div>

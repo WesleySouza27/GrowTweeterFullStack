@@ -46,11 +46,14 @@ export function Perfil() {
   const handleCreateTweet = async () => {
     try {
       const createdTweet = await criarTweetApi({ descricao: newTweet });
+      console.log('Tweet criado:', createdTweet); // Log para depuração
+
       setUserTweets((prevTweets) => [createdTweet, ...prevTweets]);
       setNewTweet(''); // Limpa o campo de texto após criar o tweet
       setIsModalOpen(false); // Fecha o modal
     } catch (error) {
       console.error('Erro ao criar tweet:', error);
+      alert('Ocorreu um erro ao criar o tweet. Tente novamente.');
     }
   };
 

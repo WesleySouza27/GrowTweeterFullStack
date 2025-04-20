@@ -75,3 +75,12 @@ export const FollowButton = styled.button<{ isFollowing: boolean }>`
     background-color: ${(props) => (props.isFollowing ? '#d6d6d6' : '#0c85d0')};
   }
 `;
+
+export const DeleteButton = styled.div`
+  color: #e0245e;
+  cursor: pointer;
+
+  &:hover {
+    color: #a81c47;
+  }
+`;
