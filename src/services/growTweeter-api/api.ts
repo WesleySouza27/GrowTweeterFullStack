@@ -2,7 +2,7 @@
 import axios from 'axios';
 
 // Defina a URL base da sua API backend
-const baseURL = import.meta.env.VITE_API_URL || 'http://localhost:3030';// Substitua pela URL real do seu backend
+const baseURL = process.env.REACT_APP_API_URL|| 'http://localhost:3030';// Substitua pela URL real do seu backend
 
 export const api = axios.create({
   baseURL,
