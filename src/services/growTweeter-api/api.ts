@@ -1,14 +1,11 @@
-// growtweeter/src/services/growTweeter-api/api.ts
 import axios from 'axios';
 
-// Defina a URL base da sua API backend
-const baseURL = process.env.REACT_APP_API_URL|| 'http://localhost:3030';// Substitua pela URL real do seu backend
+const baseURL = process.env.REACT_APP_API_URL || 'http://localhost:3030';
 
 export const api = axios.create({
   baseURL,
   headers: {
     'Content-Type': 'application/json',
-    // Você pode adicionar outros headers padrão aqui, como tokens de autenticação
   },
 });
 
