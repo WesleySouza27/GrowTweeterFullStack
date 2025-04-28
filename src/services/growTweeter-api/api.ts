@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const baseURL = process.env.REACT_APP_API_URL; // || 'http://localhost:3030';
+const baseURL = import.meta.env.VITE_API_URL || 'https://backand-api.onrender.com';
 
 export const api = axios.create({
   baseURL,
