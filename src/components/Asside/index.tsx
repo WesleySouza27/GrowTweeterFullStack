@@ -1,5 +1,6 @@
 import { trendingTopics } from '../../constants/trendingTopics';
 import { AssideContainer, TrendingTopics, ShowMoreButton } from './styled';
+import { Link } from 'react-router-dom';
 
 export function Asside() {
   return (
@@ -14,7 +15,9 @@ export function Asside() {
             </li>
           ))}
         </ul>
-        <ShowMoreButton>Mostrar mais</ShowMoreButton>
+        <Link to="/explorar">
+          <ShowMoreButton>Mostrar mais</ShowMoreButton>
+        </Link>
       </TrendingTopics>
     </AssideContainer>
   );

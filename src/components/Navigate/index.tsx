@@ -57,7 +57,7 @@ export function Navigate({ onTweetClick }: NavigateProps) {
               src={location.pathname === '/explore' ? explorarSelecionado : explorar}
               alt="icone explorar"
             />
-            <span role="img" aria-label="Explorar">Explorar</span> Explorar
+            <span role="img" aria-label="Explorar">Explorar</span>
           </NavLink>
         </NavItem>
         <NavItem>
