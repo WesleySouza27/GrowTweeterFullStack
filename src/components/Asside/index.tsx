@@ -15,7 +15,7 @@ export function Asside() {
             </li>
           ))}
         </ul>
-        <Link to="/explorar">
+        <Link to="/explore">
           <ShowMoreButton>Mostrar mais</ShowMoreButton>
         </Link>
       </TrendingTopics>
