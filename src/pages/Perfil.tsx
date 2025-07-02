@@ -11,12 +11,12 @@ import {
   ProfileInfo,
   Avatar,
   SecaoPerfilEmCima,
+  Banner,
   // TweetInput,
   // TweetButton,
 } from './Perfil.styles';
-import { criarTweetApi } from '../services/growTweeter-api/tweets/criar';
+import { criarReply, criarTweetApi } from '../services/growTweeter-api/tweets/criar';
 import { listarTweets } from '../services/growTweeter-api/tweets/listar';
-import avatarLogo from '../assets/default_profile-6e21ba0e.png'
 import { TweetModal } from '../components/TweetModal/TweetModal';
 import { TitlePerfil } from './Perfil.styles';
 
@@ -25,6 +25,10 @@ export function Perfil() {
   const [newTweet, setNewTweet] = useState(''); // Estado para o conteúdo do novo tweet
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [user, setUser] = useState<UsuarioInterface | null>(null);
+
+  const [replyModalOpen, setReplyModalOpen] = useState(false);
+  const [tweetParaResponder, setTweetParaResponder] = useState<TweetInterface | null>(null);
+  const [replyContent, setReplyContent] = useState('');
 
   useEffect(() => {
     // Recupera os dados do usuário logado do localStorage
@@ -57,7 +61,40 @@ export function Perfil() {
     }
   };
 
-  const userAvatar = user?.avatar || avatarLogo;
+  const handleReply = async () => {
+  if (!tweetParaResponder) return;
+  try {
+    const payload = {
+      tweetId: tweetParaResponder.id,
+      descricao: replyContent,
+    };
+    const createdReply = await criarReply(payload);
+    // Atualiza replies do tweet na lista do perfil
+    setUserTweets((prevTweets) =>
+      prevTweets.map((t) =>
+        t.id === tweetParaResponder.id
+          ? {
+              ...t,
+              replies: [...(t.replies || []), createdReply],
+            }
+          : t
+      )
+    );
+    setReplyModalOpen(false);
+    setReplyContent('');
+  } catch (error) {
+    alert('Erro ao enviar resposta. Tente novamente.');
+    console.error('Erro ao enviar reply:', error);
+  }
+};
+
+  const handleOpenReplyModal = (tweet: TweetInterface) => {
+    setTweetParaResponder(tweet);
+    setReplyContent('');
+    setReplyModalOpen(true);
+  };
+
+  const userAvatar = user?.avatar || '/default_avatar.png';
 
   return (
     <ProfileContainer>
@@ -75,17 +112,35 @@ export function Perfil() {
               <div className="titulo-dois">{userTweets.length} tweets</div>
             </TitlePerfil>
           </SecaoPerfilEmCima>
-          <Avatar src={userAvatar} alt="foto usuário" />
-          <ProfileInfo>
-            <h2>{user?.nome || 'Usuário'}</h2>
-            <p className="username">@{user?.email.split('@')[0] || 'username'}</p>
-          </ProfileInfo>
+          <Banner>
+            <ProfileInfo>
+              <Avatar src={userAvatar} 
+              alt="foto usuário"
+              onError={e => {
+                (e.currentTarget as HTMLImageElement).src = '/default_avatar.png';
+              }}
+              />
+              <h2>{user?.nome || 'Usuário'}</h2>
+              <p className="username">@{user?.email.split('@')[0] || 'username'}</p>
+            </ProfileInfo>
+          </Banner>
+          
         </Header>
-        <ListarTweets tweet={userTweets} />
+        <ListarTweets tweet={userTweets} onReplyClick={handleOpenReplyModal}/>
       </Content>
 
       {/* Barra lateral direita */}
       <Asside />
+
+      {replyModalOpen && tweetParaResponder && (
+        <TweetModal
+          onClose={() => setReplyModalOpen(false)}
+          onSubmit={handleReply}
+          value={replyContent}
+          onChange={(e) => setReplyContent(e.target.value)}
+          placeholder="Escreva sua resposta..."
+        />
+      )}
 
       {/* Modal para criar tweet */}
       {isModalOpen && (

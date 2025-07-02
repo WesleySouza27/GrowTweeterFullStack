@@ -10,12 +10,10 @@ export const ProfileContainer = styled.div`
 `;
 
 export const Content = styled.div`
-  padding: 20px;
   background-color: #ffffff;
   border-left: 1px solid #e1e8ed;
   border-right: 1px solid #e1e8ed;
   height: 100vh;
-  overflow-y: auto; /* Permite scroll apenas no feed */
   width: 600px;
 `;
 
@@ -24,6 +22,8 @@ export const Header = styled.div`
   flex-direction: column;
   align-items: center;
   margin-bottom: 20px;
+  position: relative; /* importante para o Banner absoluto */
+  min-height: 280px;  /* espaço para o banner e avatar */
 `;
 
 export const BackButton = styled.button`
@@ -47,16 +47,19 @@ export const Avatar = styled.img`
   width: 120px;
   height: 120px;
   border-radius: 50%;
-  border: 3px solid #1da1f2;
+  border: 4px solid #fff;
   object-fit: cover;
-  margin: 50px 0 0 0;
-  margin-right: auto;
-  align-items: flex-start;
+  margin-top: -60px; /* faz a foto sobrepor o banner */
+  background: #fff;
+  align-items: flex-end;
+  z-index: 1;
 `;
 
 export const ProfileInfo = styled.div`
   text-align: start;
   margin-right: auto;
+  margin-top: 150px;
+  margin-left: 20px;
 
   h2 {
     font-size: 1rem;
@@ -143,7 +146,7 @@ export const UserInfo = styled.div`
 
 export const TitlePerfil = styled.div`
   text-align: start;
-  margin-bottom: 20px;
+  margin-bottom: 50px;
 
   .titulo-um {
     font-size: 0.8rem;
@@ -162,4 +165,16 @@ export const SecaoPerfilEmCima = styled.div`
   display: flex;
   margin-right: auto;
   flex-direction: row;
+  padding: 8px;
 `
+
+export const Banner = styled.div`
+  width: 100%;
+  height: 150px; /* ajuste conforme desejar */
+  background: #1da1f2;
+  margin-top: 40px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 0;
+`;

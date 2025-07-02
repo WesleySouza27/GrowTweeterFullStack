@@ -8,7 +8,7 @@ export const PageContainer = styled.div`
   height: 100vh;
   background-color: #f5f8fa;
   font-family: Karla, Roboto, sans-serif;
-  overflow: hidden; /* Remove o scroll geral da página */
+  /* overflow: hidden; Remove o scroll geral da página */
   background-color: #ffffff;
   padding: 0;
 `;

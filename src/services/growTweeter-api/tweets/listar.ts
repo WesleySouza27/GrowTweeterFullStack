@@ -13,4 +13,12 @@ export const listarTweets = async (): Promise<TweetInterface[]> => {
   }
 };
 
-// Você pode adicionar outras funções para buscar tweets específicos, por usuário, etc.
+export async function listarFeed(token: string) {
+  const res = await fetch('http://localhost:3030/tweets/feed', {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  if (!res.ok) throw new Error('Erro ao buscar feed');
+  return res.json().then((data) => data.dados);
+}

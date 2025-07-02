@@ -1,13 +1,12 @@
 import { useEffect, useState } from 'react';
 import { TweetInterface } from '../interfaces/Interface';
-import { listarTweets } from '../services/growTweeter-api/tweets/listar';
-import { criarTweetApi } from '../services/growTweeter-api/tweets/criar';
+import { criarTweetApi, criarReply } from '../services/growTweeter-api/tweets/criar';
 import { ListarTweets } from '../components/ListarTweets';
 import { Navigate } from '../components/Navigate';
 import { Asside } from '../components/Asside';
 import { TweetModal } from '../components/TweetModal/TweetModal';
+import { listarFeed } from '../services/growTweeter-api/tweets/listar';
 import {
-  // Container,
   FeedContainer,
   FeedTitle,
   TweetsList,
@@ -15,35 +14,82 @@ import {
 import { PageContainer } from '../configs/global/globalStyles';
 
 export function PaginaInicial() {
+  const [replyModalOpen, setReplyModalOpen] = useState(false);
+  const [tweetParaResponder, setTweetParaResponder] = useState<TweetInterface | null>(null);
+  const [replyContent, setReplyContent] = useState('');
   const [loading, setLoading] = useState(true);
   const [listaTweets, setListaTweets] = useState<TweetInterface[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [newTweetContent, setNewTweetContent] = useState(''); // Estado para o conteúdo do novo tweet
+  const [newTweetContent, setNewTweetContent] = useState('');
 
   useEffect(() => {
     setLoading(true);
-    listarTweets().then((tweets) => {
+    const token = localStorage.getItem('authToken');
+    if (!token) {
+      alert('Faça login para ver seu feed!');
       setLoading(false);
-      setListaTweets(tweets);
-    });
+      window.location.href = '/login';
+      return;
+    }
+    listarFeed(token)
+      .then((tweets) => {
+        setListaTweets(tweets);
+      })
+      .catch(() => {
+        alert('Erro ao carregar feed');
+        localStorage.removeItem('authToken');
+        localStorage.removeItem('user');
+        window.location.href = '/login';
+      })
+      .finally(() => setLoading(false));
   }, []);
 
+  // Função para abrir o modal de reply
+  const handleOpenReplyModal = (tweet: TweetInterface) => {
+    setTweetParaResponder(tweet);
+    setReplyContent('');
+    setReplyModalOpen(true);
+  };
+
+  // Função para enviar reply
+  const handleReply = async () => {
+    if (!tweetParaResponder) return;
+    try {
+      const payload = {
+        tweetId: tweetParaResponder.id,
+        descricao: replyContent,
+      };
+      const createdReply = await criarReply(payload);
+      // Atualiza replies do tweet na lista
+      setListaTweets((prevTweets) =>
+        prevTweets.map((t) =>
+          t.id === tweetParaResponder.id
+            ? {
+                ...t,
+                replies: [...(t.replies || []), createdReply],
+              }
+            : t
+        )
+      );
+      setReplyModalOpen(false);
+      setReplyContent('');
+    } catch (error) {
+      alert('Erro ao enviar resposta. Tente novamente.');
+      console.error('Erro ao enviar reply:', error);
+    }
+  };
+
   const handleCreateTweet = async () => {
-  try {
-    const createdTweet = await criarTweetApi({ descricao: newTweetContent });
-    console.log('Tweet criado:', createdTweet); // Log para depuração
-
-    // Adiciona o novo tweet à lista de tweets
-    setListaTweets((prevTweets) => [createdTweet, ...prevTweets]);
-
-    // Limpa o campo de texto e fecha o modal
-    setNewTweetContent('');
-    setIsModalOpen(false);
-  } catch (error) {
-    console.error('Erro ao criar tweet:', error);
-    alert('Ocorreu um erro ao criar o tweet. Tente novamente.');
-  }
-};
+    try {
+      const createdTweet = await criarTweetApi({ descricao: newTweetContent });
+      setListaTweets((prevTweets) => [createdTweet, ...prevTweets]);
+      setNewTweetContent('');
+      setIsModalOpen(false);
+    } catch (error) {
+      alert('Ocorreu um erro ao criar o tweet. Tente novamente.');
+      console.error('Erro ao criar tweet:', error);
+    }
+  };
 
   return (
     <PageContainer>
@@ -51,16 +97,36 @@ export function PaginaInicial() {
       <FeedContainer>
         <FeedTitle>Página Inicial</FeedTitle>
         <TweetsList>
-          {loading ? <p>Carregando tweets...</p> : <ListarTweets tweet={listaTweets} />}
+          {loading ? (
+            <p>Carregando tweets...</p>
+          ) : (
+            <ListarTweets
+              tweet={listaTweets}
+              onReplyClick={handleOpenReplyModal} // Passe a função para cada Tweet
+            />
+          )}
         </TweetsList>
       </FeedContainer>
       <Asside />
+
+      {/* Modal para novo tweet */}
       {isModalOpen && (
         <TweetModal
           onClose={() => setIsModalOpen(false)}
-          onSubmit={handleCreateTweet} // Chama a função sem argumentos
-          value={newTweetContent} // Passa o valor do novo tweet
-          onChange={(e) => setNewTweetContent(e.target.value)} // Atualiza o estado do novo tweet
+          onSubmit={handleCreateTweet}
+          value={newTweetContent}
+          onChange={(e) => setNewTweetContent(e.target.value)}
+        />
+      )}
+
+      {/* Modal global de reply */}
+      {replyModalOpen && tweetParaResponder && (
+        <TweetModal
+          onClose={() => setReplyModalOpen(false)}
+          onSubmit={handleReply}
+          value={replyContent}
+          onChange={(e) => setReplyContent(e.target.value)}
+          placeholder="Escreva sua resposta..."
         />
       )}
     </PageContainer>

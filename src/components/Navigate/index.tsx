@@ -72,10 +72,16 @@ export function Navigate({ onTweetClick }: NavigateProps) {
       </NavLinks>
       <TweetButton onClick={onTweetClick}>Tweetar</TweetButton>
       <UserCard>
-        <UserAvatar src={user?.avatar || '/default-avatar.png'} alt="Avatar" />
+        <UserAvatar
+          src={user?.avatar || '/default_avatar.png'}
+          alt="Avatar"
+          onError={e => {
+            (e.currentTarget as HTMLImageElement).src = '/default_avatar.png';
+          }}
+        />
         <UserInfo>
           <p className="name">{user?.nome || 'Usuário'}</p>
-          <p className="username">@{user?.email.split('@')[0] || 'username'}</p>
+          <p className="username">@{user?.email?.split('@')[0] || 'username'}</p>
           <span className="logout" onClick={handleLogout}>
             Sair
           </span>

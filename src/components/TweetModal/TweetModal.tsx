@@ -7,7 +7,6 @@ import {
   TweetInput,
   TweetButton,
 } from './TweetModalStyled';
-import avatarLogo from '../../assets/default_profile-6e21ba0e.png';
 import { UserAvatar } from '../Navigate/styled';
 
 interface TweetModalProps {
@@ -19,18 +18,18 @@ interface TweetModalProps {
 }
 
 export function TweetModal({ onClose, onSubmit, value, onChange, placeholder }: TweetModalProps) {
-  const [userAvatar, setUserAvatar] = useState<string>(avatarLogo);
+  const [userAvatar, setUserAvatar] = useState<string>('/default_avatar.png');
 
   useEffect(() => {
     try {
       const storedUser = localStorage.getItem('user');
       if (storedUser) {
         const user = JSON.parse(storedUser);
-        setUserAvatar(user.avatar || avatarLogo); // Usa o avatar do usuário ou a imagem padrão
+        setUserAvatar(user.avatar || '/default_avatar.png'); // Usa o avatar do usuário ou a imagem padrão
       }
     } catch (error) {
       console.error('Erro ao carregar avatar do usuário:', error);
-      setUserAvatar(avatarLogo); // Usa o avatar padrão em caso de erro
+      setUserAvatar('/default_avatar.png'); // Usa o avatar padrão em caso de erro
     }
   }, []);
 
@@ -51,7 +50,13 @@ export function TweetModal({ onClose, onSubmit, value, onChange, placeholder }: 
           }}
         >
           <div style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
-            <UserAvatar src={userAvatar} alt="Avatar do usuário" />
+            <UserAvatar
+              src={userAvatar}
+              alt="Avatar do usuário"
+              onError={e => {
+                (e.currentTarget as HTMLImageElement).src = '/default_avatar.png';
+              }}
+            />
             <TweetInput
               value={value}
               onChange={onChange}

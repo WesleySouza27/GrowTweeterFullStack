@@ -1,5 +1,5 @@
-import { TweetInterface } from '../../interfaces/Interface';
-import { TweetModal } from '../TweetModal/TweetModal';
+import { useState, useEffect } from 'react';
+import { TweetInterface, UsuarioInterface } from '../../interfaces/Interface';
 import {
   TweetContainer,
   Avatar,
@@ -10,120 +10,156 @@ import {
   Body,
   Actions,
   FollowButton,
+  RepliesWrapper,
+  ReplyContainer,
 } from './styled';
 import { likeTweet, dislikeTweet } from '../../services/growTweeter-api/tweets/like_deslike';
-import { useState, useEffect } from 'react';
-import default_profile from '../../assets/default_profile-6e21ba0e.png';
 import iconeResposta from '../../assets/icone_responder-51a8f819.svg';
 import iconeLike from '../../assets/icone_curtir-407e1295.svg';
 import iconeLikeSelecionado from '../../assets/icone_curtir_selecionado-c222b3b4.svg';
-import { criarReply } from '../../services/growTweeter-api/tweets/criar';
-import { seguirUsuario, deixarDeSeguirUsuario, verificarSeSegue } from '../../services/growTweeter-api/tweets/follow';
+import {
+  seguirUsuario,
+  deixarDeSeguirUsuario,
+  verificarSeSegue,
+} from '../../services/growTweeter-api/tweets/follow';
 import { deletarTweet } from '../../services/growTweeter-api/tweets/deletar';
+import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
+import { VerticalLine, VerticalBar } from './styled';
+
+async function buscarUsuarioPorIdOtimizado(usuarioId: string, tweetUsuario: UsuarioInterface): Promise<UsuarioInterface> {
+  if (usuarioId === tweetUsuario.id) return tweetUsuario;
+  try {
+    const response = await fetch(`/api/usuarios/${usuarioId}`);
+    if (!response.ok) return {
+      id: usuarioId, nome: 'Desconhecido', email: '', senha: '', avatar: undefined, criadoEm: '', atualizadoEm: ''
+    };
+    return await response.json();
+  } catch {
+    return {
+      id: usuarioId, nome: 'Desconhecido', email: '', senha: '', avatar: undefined, criadoEm: '', atualizadoEm: ''
+    };
+  }
+}
 
 interface TweetProps {
   tweet: TweetInterface;
+  isReply?: boolean;
+  onReplyClick?: (tweet: TweetInterface) => void; // NOVO: função para abrir modal global
 }
 
-export function Tweet({ tweet }: TweetProps) {
-  
+type RawReply = {
+  id: string;
+  descricao: string;
+  tipo: string;
+  usuarioId: string;
+  criadoEm: string;
+  atualizadoEm: string;
+  parentId: string;
+};
 
-  const user = JSON.parse(localStorage.getItem('user') || '{}');
-  const [likes, setLikes] = useState(tweet.likes ? tweet.likes.length: 0);
-  const [liked, setLiked] = useState(
-  tweet.likes ? tweet.likes.some((like) => like.usuarioId === user.id) : false
-);
-  const [isReplyModalOpen, setIsReplyModalOpen] = useState(false);
-  const [replyContent, setReplyContent] = useState('');
-  const [replies, setReplies] = useState(tweet.replies || []);
-  const [isFollowing, setIsFollowing] = useState(false);
-  const [followId, setFollowId] = useState<string | null>(null);
-  const [likeId, setLikeId] = useState<string | null>(null); 
-  
+type ReplyType = TweetInterface | RawReply;
+
+function isTweetInterface(obj: unknown): obj is TweetInterface {
+  return (
+    typeof obj === 'object' &&
+    obj !== null &&
+    'usuario' in obj &&
+    'likes' in obj &&
+    Array.isArray((obj as TweetInterface).likes)
+  );
+}
+
+async function enrichReply(raw: RawReply, tweetUsuario: UsuarioInterface): Promise<TweetInterface> {
+  const usuario = await buscarUsuarioPorIdOtimizado(raw.usuarioId, tweetUsuario);
+  return { ...raw, usuario, likes: [], replies: [] };
+}
+
+function AsyncReply({ rawReply, tweetUsuario }: { rawReply: RawReply, tweetUsuario: UsuarioInterface }) {
+  const [enriched, setEnriched] = useState<TweetInterface | null>(null);
+  const [erro, setErro] = useState(false);
 
   useEffect(() => {
-    if (tweet && tweet.likes && tweet.replies) {
-      setLikes(tweet.likes.length);
-      setLiked(tweet.likes.some((like) => like.usuarioId === user.id));
-      setReplies(tweet.replies);
-    }
+    enrichReply(rawReply, tweetUsuario)
+      .then(setEnriched)
+      .catch(() => setErro(true));
+  }, [rawReply, tweetUsuario]);
+
+  if (erro) return <div>Erro ao carregar resposta.</div>;
+  if (!enriched)
+    return <span style={{ color: '#657786', fontSize: '0.8rem' }}>Carregando resposta...</span>;
+  return <Tweet tweet={enriched} isReply={true} />;
+}
+
+export function Tweet({ tweet, isReply = false, onReplyClick }: TweetProps) {
+  const user = JSON.parse(localStorage.getItem('user') || '{}');
+  const [likes, setLikes] = useState(tweet.likes ? tweet.likes.length : 0);
+  const [liked, setLiked] = useState(
+    tweet.likes ? tweet.likes.some((like) => like.usuarioId === user.id) : false
+  );
+  const [replies, setReplies] = useState<ReplyType[]>(tweet.replies ?? []);
+  const [isFollowing, setIsFollowing] = useState(false);
+  const [followId, setFollowId] = useState<string | null>(null);
+  const [likeId, setLikeId] = useState<string | null>(null);
+
+  useEffect(() => {
+    setLikes(tweet.likes ? tweet.likes.length : 0);
+    setLiked(tweet.likes ? tweet.likes.some((like) => like.usuarioId === user.id) : false);
+    setReplies(tweet.replies ?? []);
   }, [tweet, user.id]);
 
   useEffect(() => {
-    if (user.id && tweet.usuario.id) {
-      verificarSeSegue(user.id, tweet.usuario.id)
-        .then((follow) => {
-          if (follow) {
-            setIsFollowing(true);
-            setFollowId(follow.id);
-          }
-        })
-        .catch((error) => console.error('Erro ao verificar se segue:', error));
+  if (user.id && tweet.usuario.id) {
+    verificarSeSegue(user.id, tweet.usuario.id)
+      .then((res) => {
+        setIsFollowing(!!res.segue);
+        setFollowId(res.id || null);
+      })
+      .catch((error) => console.error('Erro ao verificar se segue:', error));
     }
   }, [user.id, tweet.usuario.id]);
 
   const handleDelete = async () => {
-    const confirmDelete = window.confirm('Tem certeza que deseja deletar este tweet?');
-    if (!confirmDelete) return;
-
+    if (!window.confirm('Tem certeza que deseja deletar este tweet?')) return;
     try {
-      await deletarTweet(tweet.id); // Chama o serviço para deletar o tweet
+      await deletarTweet(tweet.id);
       alert('Tweet deletado com sucesso!');
-      // Aqui você pode implementar uma lógica para remover o tweet da lista de tweets no frontend
     } catch (error) {
       console.error('Erro ao deletar tweet:', error);
       alert('Ocorreu um erro ao deletar o tweet. Tente novamente mais tarde.');
     }
   };
 
-
-  const handleReply = async () => {
+  const handleLike = async () => {
     try {
-      const payload = {
-        tweetId: tweet.id,
-        descricao: replyContent,
-      };
-      const createdReply = await criarReply(payload);
-      console.log('Resposta criada:', createdReply);
-      setReplies([...replies, createdReply]);
-      setReplyContent('');
-      setIsReplyModalOpen(false);
-      console.log('Modal fechado e campo de input limpo.');
+      if (liked) {
+        if (likeId) {
+          await dislikeTweet(likeId);
+          setLikes((prev) => prev - 1);
+          setLikeId(null);
+        }
+      } else {
+        const response = await likeTweet(tweet.id);
+        setLikes((prev) => prev + 1);
+        setLikeId(response.data.dados.id);
+      }
+      setLiked((prev) => !prev);
     } catch (error) {
-      console.error('Erro ao enviar reply:', error);
-      alert('Ocorreu um erro ao enviar sua resposta. Tente novamente.');
+      console.error('Erro ao curtir/descurtir o tweet:', error);
+      alert('Ocorreu um erro ao processar sua ação. Tente novamente mais tarde.');
     }
   };
-
-  const handleLike = async () => {
-  try {
-    if (liked) {
-      // Descurtir
-      if (likeId) {
-        await dislikeTweet(likeId); // Remove o like usando o ID do like
-        setLikes(likes - 1); // Atualiza o contador de likes
-        setLikeId(null); // Reseta o ID do like
-      }
-    } else {
-      // Curtir
-      const response = await likeTweet(tweet.id); // Envia o like para o backend
-      setLikes(likes + 1); // Atualiza o contador de likes
-      setLikeId(response.data.dados.id); // Armazena o ID do like retornado pela API
-    }
-    setLiked(!liked); // Alterna o estado de "liked"
-  } catch (error) {
-    console.error('Erro ao curtir/descurtir o tweet:', error);
-    alert('Ocorreu um erro ao processar sua ação. Tente novamente mais tarde.');
-  }
-};
 
   const handleFollow = async () => {
     try {
       if (isFollowing) {
-        if (followId) {
-          await deixarDeSeguirUsuario(followId);
-          setIsFollowing(false);
-          setFollowId(null);
+        if (window.confirm('Tem certeza que deseja deixar de seguir este usuário?')) {
+          if (followId) {
+            await deixarDeSeguirUsuario(followId);
+            setIsFollowing(false);
+            setFollowId(null);
+          } else {
+            alert('Não foi possível encontrar o ID do follow para deixar de seguir.');
+          }
         }
       } else {
         const payload = {
@@ -135,45 +171,72 @@ export function Tweet({ tweet }: TweetProps) {
         setFollowId(follow.id);
       }
     } catch (error) {
+      alert(error?.response?.data?.mensagem || 'Erro ao seguir/deixar de seguir');
       console.error('Erro ao seguir/deixar de seguir:', error);
     }
   };
 
-  if (!tweet || !tweet.usuario || !Array.isArray(tweet.likes) || !Array.isArray(tweet.replies)) {
+  if (
+    !tweet ||
+    !tweet.usuario ||
+    !Array.isArray(tweet.likes) ||
+    !Array.isArray(tweet.replies)
+  ) {
     return <p>Erro: Dados do tweet estão incompletos ou inválidos.</p>;
   }
 
-  
+  const renderReplies = () =>
+  replies.length > 0 && (
+    <RepliesWrapper>
+      {replies.map((reply, idx) => (
+        <div key={reply.id} style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+          <VerticalLine>
+            <VerticalBar />
+          </VerticalLine>
+          <div style={{ flex: 1 }}>
+            <ReplyContainer isLast={idx === replies.length - 1}>
+              {isTweetInterface(reply)
+                ? <Tweet tweet={reply} isReply={true} onReplyClick={onReplyClick} />
+                : <AsyncReply rawReply={reply as RawReply} tweetUsuario={tweet.usuario} />}
+            </ReplyContainer>
+          </div>
+        </div>
+      ))}
+    </RepliesWrapper>
+  );
 
   return (
     <>
-      <TweetContainer>
+      <TweetContainer tipo={isReply ? undefined : "tweet"} hasReplies={replies.length > 0}>
         <Avatar>
-          {tweet.usuario.avatar ? (
-            <img src={tweet.usuario.avatar} alt={`${tweet.usuario.nome}'s avatar`} />
-          ) : (
-            <img src={default_profile} alt="Avatar padrão" />
-          )}
+          <img
+            src={tweet.usuario.avatar || '/default_avatar.png'}
+            alt="Avatar"
+            onError={e => {
+              (e.currentTarget as HTMLImageElement).src = '/default_avatar.png';
+            }}
+          />
         </Avatar>
         <Content>
           <Header>
             <AuthorName>{tweet.usuario.nome}</AuthorName>
             <Username>@{tweet.usuario.nome} • 3h</Username>
-            <FollowButton
-              isFollowing={isFollowing}
-              onClick={handleFollow}
-            >
-              {isFollowing ? 'Deixar de Seguir' : 'Seguir'}
-            </FollowButton>
+            {!isReply && user.id !== tweet.usuario.id && (
+              <FollowButton isFollowing={isFollowing} onClick={handleFollow}>
+                {isFollowing ? 'Deixar de Seguir' : 'Seguir'}
+              </FollowButton>
+            )}
           </Header>
           <Body>{tweet.descricao}</Body>
           <Actions>
-            <div className="action-item" onClick={() => setIsReplyModalOpen(true)}>
-              <span role="img" aria-label="Comentário">
-                <img src={iconeResposta} alt="Responder" />
-              </span>
-              <span>{replies.length}</span>
-            </div>
+            {!isReply && onReplyClick && (
+              <div className="action-item" onClick={() => onReplyClick(tweet)}>
+                <span role="img" aria-label="Comentário">
+                  <img src={iconeResposta} alt="Responder" />
+                </span>
+                <span>{replies.length}</span>
+              </div>
+            )}
             <div
               className="action-item"
               onClick={handleLike}
@@ -187,27 +250,17 @@ export function Tweet({ tweet }: TweetProps) {
               </span>
               <span>{likes}</span>
             </div>
-            {tweet.usuario.id === user.id && ( // Exibe o botão apenas para o autor do tweet
+            {tweet.usuario.id === user.id && (
               <div className="action-item" onClick={handleDelete}>
                 <span role="img" aria-label="Deletar">
-                  🗑️
+                  <DeleteOutlineIcon style={{ fontSize: 15, color: '#e0245e' }} />
                 </span>
-                <span>Deletar</span>
               </div>
             )}
           </Actions>
         </Content>
       </TweetContainer>
-
-      {isReplyModalOpen && (
-        <TweetModal
-          onClose={() => setIsReplyModalOpen(false)}
-          onSubmit={handleReply}
-          placeholder="Escreva sua resposta..."
-          value={replyContent}
-          onChange={(e) => setReplyContent(e.target.value)}
-        />
-      )}
+      {!isReply && renderReplies()}
     </>
   );
 }

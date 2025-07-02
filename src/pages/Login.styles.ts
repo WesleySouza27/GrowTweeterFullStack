@@ -17,13 +17,14 @@ export const LoginLeftSide = styled.div`
   color: white;
 
   .growtwitter-title {
-    font-size: 2.5rem;
+    font-size: 2.8rem;
     font-weight: bold;
     margin-bottom: 20px;
   }
 
   .growtwitter-description {
-    font-size: 1.2rem;
+    font-size: 1.3rem;
+    width: 70%;
     text-align: center;
     line-height: 1.5;
   }
@@ -43,6 +44,7 @@ export const LoginTitle = styled.h2`
   font-size: 1.8rem;
   font-weight: bold;
   margin-bottom: 20px;
+  color: #1da1f2;
 `;
 
 export const LoginForm = styled.form`

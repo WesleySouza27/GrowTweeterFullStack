@@ -9,7 +9,7 @@ interface FollowPayload {
 export const seguirUsuario = async (payload: FollowPayload) => {
   try {
     const response = await api.post('/follows', payload);
-    return response.data.dados; // Retorna os dados do follow criado
+    return response.data.dados;
   } catch (error) {
     console.error('Erro ao seguir usuário:', error);
     throw error;
@@ -29,7 +29,7 @@ export const deixarDeSeguirUsuario = async (followId: string) => {
 // Função para verificar se um usuário já segue outro
 export const verificarSeSegue = async (followerId: string, followingId: string) => {
   try {
-    const response = await api.get(`/follows/${followerId}/${followingId}`);
+    const response = await api.get(`/follows/verifica/${followerId}/${followingId}`);
     return response.data.dados; // Retorna os dados do follow, se existir
   } catch (error) {
     console.error('Erro ao verificar se segue:', error);

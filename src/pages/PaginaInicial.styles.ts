@@ -2,26 +2,25 @@ import styled from 'styled-components';
 
 export const Container = styled.div`
   display: grid;
-  grid-template-columns: 230px auto 480px; /* Menu lateral, feed principal, barra lateral */
+  grid-template-columns: 250px 1fr 350px; /* Menu lateral, feed principal, barra lateral */
+  max-width: 1200px;
+  margin: 0 auto;
   min-height: 100vh;
-  background-color: #f5f8fa;
-  padding-left: 50px;
+  background: #f5f8fa;
 `;
 
 export const FeedContainer = styled.div`
-  background-color: #ffffff;
+  background: #fff;
   border-left: 1px solid #e1e8ed;
   border-right: 1px solid #e1e8ed;
   width: 600px;
-  height: 100vh;
-  overflow-y: auto; /* Permite scroll apenas no feed */
-  font-family: karla, roboto, sans-serif;
+  min-height: 100vh;
+  padding: 0;
 `;
 
 export const FeedTitle = styled.h1`
   font-size: 1rem;
   font-weight: bold;
-  margin: 20px 0 20px 10px;
   font-family: karla, roboto, sans-serif;
   border-bottom: 1px solid #e1e8ed;
   padding-bottom: 15px;
@@ -39,13 +38,25 @@ export const Sidebar = styled.div`
   overflow: hidden; /* Remove o scroll do menu lateral */
 `;
 
-export const AssideContainer = styled.div`
+export const AssideContainer = styled.aside`
   padding: 20px;
-  background-color: #f5f8fa;
-  height: 100vh;
-  border-left: 1px solid #e1e8ed;
-  overflow: hidden; /* Remove o scroll do Asside */
+  background: #f5f8fa;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
 `;
+
+export const TrendingTopics = styled.div`
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  padding: 20px;
+  width: 100%;
+  max-width: 320px;
+  margin-top: 20px;
+`;
+
 
 export const NewTweetForm = styled.div`
   margin-bottom: 20px;
@@ -70,17 +81,16 @@ export const TweetInput = styled.textarea`
 `;
 
 export const TweetButton = styled.button`
-  background-color: #1da1f2;
-  color: white;
+  background: #1da1f2;
+  color: #fff;
   border: none;
-  padding: 10px 20px;
-  border-radius: 20px;
-  cursor: pointer;
+  border-radius: 999px;
+  width: 90%;
+  padding: 12px 0;
   font-weight: bold;
-
-  &:hover {
-    background-color: #0c85d0;
-  }
+  font-size: 16px;
+  margin: 24px 0;
+  cursor: pointer;
 `;
 
 export const TweetsList = styled.div`
