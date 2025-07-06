@@ -19,7 +19,12 @@ export const seguirUsuario = async (payload: FollowPayload) => {
 // Função para deixar de seguir um usuário
 export const deixarDeSeguirUsuario = async (followId: string) => {
   try {
-    await api.delete(`/follows/${followId}`);
+    const token = localStorage.getItem('authToken');
+    await api.delete(`/follows/${followId}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
   } catch (error) {
     console.error('Erro ao deixar de seguir usuário:', error);
     throw error;
@@ -30,7 +35,7 @@ export const deixarDeSeguirUsuario = async (followId: string) => {
 export const verificarSeSegue = async (followerId: string, followingId: string) => {
   try {
     const response = await api.get(`/follows/verifica/${followerId}/${followingId}`);
-    return response.data.dados; // Retorna os dados do follow, se existir
+    return response.data.dados;
   } catch (error) {
     console.error('Erro ao verificar se segue:', error);
     throw error;

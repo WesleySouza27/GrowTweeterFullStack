@@ -111,6 +111,7 @@ export function Tweet({ tweet, isReply = false, onReplyClick }: TweetProps) {
   if (user.id && tweet.usuario.id) {
     verificarSeSegue(user.id, tweet.usuario.id)
       .then((res) => {
+        console.log('verificarSeSegue:', res); // <-- Adicione este log
         setIsFollowing(!!res.segue);
         setFollowId(res.id || null);
       })
@@ -155,8 +156,10 @@ export function Tweet({ tweet, isReply = false, onReplyClick }: TweetProps) {
         if (window.confirm('Tem certeza que deseja deixar de seguir este usuário?')) {
           if (followId) {
             await deixarDeSeguirUsuario(followId);
-            setIsFollowing(false);
-            setFollowId(null);
+            const res = await verificarSeSegue(user.id, tweet.usuario.id);
+            setIsFollowing(!!res.segue);
+            setFollowId(res.id || null);
+            console.log('verificarSeSegue ******:', res);
           } else {
             alert('Não foi possível encontrar o ID do follow para deixar de seguir.');
           }
@@ -171,8 +174,12 @@ export function Tweet({ tweet, isReply = false, onReplyClick }: TweetProps) {
         setFollowId(follow.id);
       }
     } catch (error) {
-      alert(error?.response?.data?.mensagem || 'Erro ao seguir/deixar de seguir');
-      console.error('Erro ao seguir/deixar de seguir:', error);
+      if ((error as any)?.response?.status === 404) {
+        setIsFollowing(false);
+        setFollowId(null);
+        return;
+      }
+      alert((error as any)?.response?.data?.message || 'Erro ao seguir/deixar de seguir.');
     }
   };
 

@@ -16,7 +16,7 @@ export function ListarTweets({ tweet, onReplyClick }: ListaTweetsProps) {
   return (
     <TweetListContainer>
       {tweet
-        .filter((t) => t && t.usuario && t.usuario.id)
+        .filter((t)  => t.tipo === 'tweet')
         .map((tweet) => (
           <ErrorBoundary key={tweet.id}>
             <Tweet tweet={tweet} onReplyClick={onReplyClick} />
