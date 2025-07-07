@@ -174,12 +174,12 @@ export function Tweet({ tweet, isReply = false, onReplyClick }: TweetProps) {
         setFollowId(follow.id);
       }
     } catch (error) {
-      if ((error as any)?.response?.status === 404) {
+      if ((error)?.response?.status === 404) {
         setIsFollowing(false);
         setFollowId(null);
         return;
       }
-      alert((error as any)?.response?.data?.message || 'Erro ao seguir/deixar de seguir.');
+      alert((error)?.response?.data?.message || 'Erro ao seguir/deixar de seguir.');
     }
   };
 
