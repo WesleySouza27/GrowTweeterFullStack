@@ -20,13 +20,17 @@ interface UsuarioResponse {
   email: string;
 }
 
+const API_BASE_URL = 'https://backand-api.onrender.com';
+
+
 
 // src/services/growTweeter-api/auth/index.ts
-export const loginUser = async (payload: { email: string; password: string }): Promise<{ token: string; usuario: UsuarioResponse }> => {
+export async function loginUser(credentials: { email: string; password: string }) {
   try {
-    const response = await api.post('/usuarios/login', payload);
-    console.log('Resposta do backend:', response.data); // Adicione este log para depuração
-    return response.data.dados // Certifique-se de que o backend retorna { token, usuario }
+    //const response = await api.post('/usuarios/login', payload);
+    const response = await api.post(`${API_BASE_URL}/usuarios/login`, credentials);
+    //return response.data.dados // Certifique-se de que o backend retorna { token, usuario }
+    return response.data.dados as UsuarioResponse; // Ajuste conforme a estrutura de resposta do seu backend
   } catch (error) {
     console.error('Erro ao fazer login:', error);
     throw error;
