@@ -1,12 +1,13 @@
-// growtweeter/src/services/growTweeter-api/tweets/listar.ts
 import { api } from "../api";
 import { TweetInterface } from "../../../interfaces/Interface";
+
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 
 export const listarTweets = async (): Promise<TweetInterface[]> => {
   try {
     const response = await api.get('/tweets');
-    console.log('Resposta do backend (tweets):', response.data); // Log para depuração
-    return response.data.dados; // Certifique-se de que "dados" contém os tweets
+    console.log('Resposta do backend (tweets):', response.data);
+    return response.data.dados;
   } catch (error) {
     console.error("Erro ao listar tweets:", error);
     throw error;
@@ -14,7 +15,7 @@ export const listarTweets = async (): Promise<TweetInterface[]> => {
 };
 
 export async function listarFeed(token: string) {
-  const res = await fetch('http://localhost:3030/tweets/feed', {
+  const res = await fetch(`${API_URL}/tweets/feed`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },

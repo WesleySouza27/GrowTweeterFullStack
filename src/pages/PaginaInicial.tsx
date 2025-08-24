@@ -37,7 +37,7 @@ export function PaginaInicial() {
       })
       .catch(() => {
         alert('Erro ao carregar feed');
-        localStorage.removeItem('authToken');
+        localStorage.removeItem('auth_Token');
         localStorage.removeItem('user');
         window.location.href = '/login';
       })

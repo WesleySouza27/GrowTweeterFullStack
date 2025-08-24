@@ -27,9 +27,9 @@ export function Login() {
       console.log('Resposta do serviço loginUser:', response);
 
       if (response?.token && response?.usuario) {
-        localStorage.setItem('authToken', response.token);
+        localStorage.setItem('auth_Token', response.token);
         localStorage.setItem('user', JSON.stringify(response.usuario));
-        console.log('Token armazenado:', localStorage.getItem('authToken'));
+        console.log('Token armazenado:', localStorage.getItem('auth_Token'));
         navigate('/');
       } else {
         setError('Falha ao fazer login. Tente novamente.');
