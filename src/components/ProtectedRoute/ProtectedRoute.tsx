@@ -6,6 +6,7 @@ export function ProtectedRoute({ children }: { children: React.ReactNode }) {
 
   // Se não houver token ou user, redireciona para login
   if (!token || !user) {
+    alert("Faça login para acessar esta página.");
     localStorage.removeItem("authToken");
     localStorage.removeItem("user");
     return <Navigate to="/login" replace />;

@@ -13,7 +13,7 @@ export const api = axios.create({
 api.interceptors.request.use(
   (config) => {
     if (config.url && !config.url.includes('/usuarios/login')) {
-      const token = localStorage.getItem('auth_Token');
+      const token = localStorage.getItem('authToken');
       if (token) {
         config.headers.Authorization = `Bearer ${token}`;
       }
@@ -32,7 +32,7 @@ api.interceptors.response.use(
       error.response.status === 401
     ) {
       // Remove token inválido e redireciona para login
-      localStorage.removeItem('auth_Token');
+      localStorage.removeItem('authToken');
       localStorage.removeItem('user');
       window.location.href = '/login';
     }

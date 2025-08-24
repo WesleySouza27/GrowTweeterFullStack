@@ -25,11 +25,12 @@ import {
 import { deletarTweet } from '../../services/growTweeter-api/tweets/deletar';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import { VerticalLine, VerticalBar } from './styled';
+const API_BASE_URL = import.meta.env.VITE_API_URL;
 
 async function buscarUsuarioPorIdOtimizado(usuarioId: string, tweetUsuario: UsuarioInterface): Promise<UsuarioInterface> {
   if (usuarioId === tweetUsuario.id) return tweetUsuario;
   try {
-    const response = await fetch(`/api/usuarios/${usuarioId}`);
+    const response = await fetch(`${API_BASE_URL}/api/usuarios/${usuarioId}`);
     if (!response.ok) return {
       id: usuarioId, nome: 'Desconhecido', email: '', senha: '', avatar: undefined, criadoEm: '', atualizadoEm: ''
     };
