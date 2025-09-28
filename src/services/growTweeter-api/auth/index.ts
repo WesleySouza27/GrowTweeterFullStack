@@ -9,7 +9,7 @@ import { UsuarioInterface } from "../../../interfaces/Interface";
 //   senha: string;
 // }
 
-interface LoginResponse {
+export interface LoginResponse {
   token: string;
   usuario: Omit<UsuarioInterface, 'senha'>;
 }

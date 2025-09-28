@@ -175,7 +175,7 @@ export function Tweet({ tweet, isReply = false, onReplyClick }: TweetProps) {
         setIsFollowing(true);
         setFollowId(follow.id);
       }
-    } catch (err) {
+    } catch (err: string | unknown) {
       const error = err as AxiosError<{ message?: string }>;
       if (error?.response?.status === 404) {
         setIsFollowing(false);

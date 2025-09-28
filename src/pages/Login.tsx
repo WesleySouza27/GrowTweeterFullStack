@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { loginUser } from '../services/growTweeter-api/auth';
 import {
   LoginPageContainer,
@@ -12,37 +12,32 @@ import {
   ErrorMessage,
   SignupLink,
 } from './Login.styles';
+import { LoginResponse } from '../services/growTweeter-api/auth/index.ts';
 
 export function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
 
   const handleSubmit = async (e?: React.FormEvent) => {
-    e?.preventDefault();
-    setError('');
-    try {
-      const response = await loginUser({ email, password });
-      console.log('Resposta do serviço loginUser:', response);
-      if (response?.token && response?.usuario) {
-        localStorage.setItem('authToken', response.token);
-        localStorage.setItem('user', JSON.stringify(response.usuario));
-        console.log('Token armazenado:', localStorage.getItem('authToken'));
-        window.location.href = '/';
-        navigate('/');
-        return;
-      } else {
-        setError('Falha ao fazer login. Tente novamente.');
-      }
-    } catch (err: unknown) {
-      if (err instanceof Error) {
-        setError(err.message);
-      } else {
-        setError('Erro desconhecido ao fazer login.');
-      }
+  e?.preventDefault();
+  try {
+    const response = await loginUser({ email, password });
+    // loginUser retorna { token, usuario } conforme seu backend
+    const data: LoginResponse = response;
+    if (data?.token && data?.usuario) {
+      localStorage.setItem('authToken', data.token);
+      localStorage.setItem('user', JSON.stringify(data.usuario));
+      // redireciona
+      window.location.href = '/';
+      return;
     }
-  };
+    setError('Resposta inválida do servidor');
+  } catch (err: any) {
+    setError(err?.response?.data?.mensagem || 'Falha ao autenticar');
+  }
+};
 
   return (
     <LoginPageContainer>
