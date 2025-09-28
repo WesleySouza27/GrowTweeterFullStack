@@ -9,16 +9,16 @@ import { UsuarioInterface } from "../../../interfaces/Interface";
 //   senha: string;
 // }
 
-// interface LoginResponse {
-//   token: string;
-//   usuario: Omit<UsuarioInterface, 'senha'>;
-// }
-
-interface UsuarioResponse {
-  id: string;
-  nome: string;
-  email: string;
+interface LoginResponse {
+  token: string;
+  usuario: Omit<UsuarioInterface, 'senha'>;
 }
+
+// interface UsuarioResponse {
+//   id: string;
+//   nome: string;
+//   email: string;
+// }
 
 
 // src/services/growTweeter-api/auth/index.ts
@@ -26,7 +26,8 @@ export async function loginUser(payload: { email: string; password: string }) {
   try {
     const response = await api.post(`/usuarios/login`, payload);
     //return response.data.dados // Certifique-se de que o backend retorna { token, usuario }
-    return response.data.dados as UsuarioResponse; // Ajuste conforme a estrutura de resposta do seu backend
+    const data = response.data?.dados ?? response.data;
+    return data as LoginResponse;
   } catch (error) {
     console.error('Erro ao fazer login:', error);
     throw error;

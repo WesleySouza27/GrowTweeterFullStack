@@ -19,18 +19,19 @@ export function Login() {
   const [error, setError] = useState('');
   const navigate = useNavigate();
 
-  const handleSubmit = async (event: React.FormEvent) => {
-    event.preventDefault();
+  const handleSubmit = async (e?: React.FormEvent) => {
+    e?.preventDefault();
     setError('');
     try {
       const response = await loginUser({ email, password });
       console.log('Resposta do serviço loginUser:', response);
-
       if (response?.token && response?.usuario) {
         localStorage.setItem('authToken', response.token);
         localStorage.setItem('user', JSON.stringify(response.usuario));
         console.log('Token armazenado:', localStorage.getItem('authToken'));
+        window.location.href = '/';
         navigate('/');
+        return;
       } else {
         setError('Falha ao fazer login. Tente novamente.');
       }

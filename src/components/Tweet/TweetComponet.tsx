@@ -25,6 +25,7 @@ import {
 import { deletarTweet } from '../../services/growTweeter-api/tweets/deletar';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import { VerticalLine, VerticalBar } from './styled';
+import { AxiosError } from 'axios';
 const API_BASE_URL = import.meta.env.VITE_API_URL;
 
 async function buscarUsuarioPorIdOtimizado(usuarioId: string, tweetUsuario: UsuarioInterface): Promise<UsuarioInterface> {
@@ -174,13 +175,15 @@ export function Tweet({ tweet, isReply = false, onReplyClick }: TweetProps) {
         setIsFollowing(true);
         setFollowId(follow.id);
       }
-    } catch (error) {
-      if ((error)?.response?.status === 404) {
+    } catch (err) {
+      const error = err as AxiosError<{ message?: string }>;
+      if (error?.response?.status === 404) {
         setIsFollowing(false);
         setFollowId(null);
         return;
       }
-      alert((error)?.response?.data?.message || 'Erro ao seguir/deixar de seguir.');
+      alert(error?.response?.data?.message || 'Erro ao seguir/deixar de seguir.');
+      console.error('Erro ao seguir/deixar de seguir:', error);
     }
   };
 
