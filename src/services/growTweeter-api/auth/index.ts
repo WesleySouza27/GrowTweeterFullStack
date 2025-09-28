@@ -20,15 +20,11 @@ interface UsuarioResponse {
   email: string;
 }
 
-const API_BASE_URL = import.meta.env.VITE_API_URL;
-
-
 
 // src/services/growTweeter-api/auth/index.ts
-export async function loginUser(credentials: { email: string; password: string }) {
+export async function loginUser(payload: { email: string; password: string }) {
   try {
-    //const response = await api.post('/usuarios/login', payload);
-    const response = await api.post(`${API_BASE_URL}/usuarios/login`, credentials);
+    const response = await api.post(`/usuarios/login`, payload);
     //return response.data.dados // Certifique-se de que o backend retorna { token, usuario }
     return response.data.dados as UsuarioResponse; // Ajuste conforme a estrutura de resposta do seu backend
   } catch (error) {

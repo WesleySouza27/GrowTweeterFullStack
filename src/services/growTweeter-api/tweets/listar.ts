@@ -1,7 +1,6 @@
+
 import { api } from "../api";
 import { TweetInterface } from "../../../interfaces/Interface";
-
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 
 export const listarTweets = async (): Promise<TweetInterface[]> => {
   try {
@@ -14,12 +13,12 @@ export const listarTweets = async (): Promise<TweetInterface[]> => {
   }
 };
 
-export async function listarFeed(token: string) {
-  const res = await fetch(`${API_URL}/tweets/feed`, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
-  if (!res.ok) throw new Error('Erro ao buscar feed');
-  return res.json().then((data) => data.dados);
+export async function listarFeed() {
+  try {
+    const response = await api.get('/tweets/feed');
+    return response.data.dados;
+  } catch (error) {
+    console.error("Erro ao buscar feed:", error);
+    throw error;
+  }
 }

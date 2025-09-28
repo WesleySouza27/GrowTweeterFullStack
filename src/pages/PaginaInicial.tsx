@@ -31,7 +31,7 @@ export function PaginaInicial() {
       window.location.href = '/login';
       return;
     }
-    listarFeed(token)
+    listarFeed()
       .then((tweets) => {
         setListaTweets(tweets);
       })
