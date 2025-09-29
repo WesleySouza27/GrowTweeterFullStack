@@ -15,8 +15,8 @@ export const listarTweets = async (): Promise<TweetInterface[]> => {
 
 export async function listarFeed() {
   try {
-    const response = await api.get('/tweets/feed');
-    return response.data.dados;
+    const { data } = await api.get('/tweets/feed');
+    return data?.dados ?? [];
   } catch (error) {
     console.error("Erro ao buscar feed:", error);
     throw error;

@@ -33,13 +33,19 @@ export function PaginaInicial() {
     }
     listarFeed()
       .then((tweets) => {
-        setListaTweets(tweets);
+        setListaTweets(tweets ?? []);
       })
-      .catch(() => {
-        alert('Erro ao carregar feed');
-        localStorage.removeItem('authToken');
-        localStorage.removeItem('user');
-        window.location.href = '/login';
+      .catch((e: any) => {
+        console.error('Erro ao carregar feed:', e?.response?.status, e?.response?.data || e?.message);
+        const status = e?.response?.status;
+        if (status === 401 || status === 403) {
+          alert('Sessão expirada. Faça login novamente.');
+          localStorage.removeItem('authToken');
+          localStorage.removeItem('user');
+          window.location.href = '/login';
+        } else {
+          alert('Erro ao carregar feed');
+        }
       })
       .finally(() => setLoading(false));
   }, []);
